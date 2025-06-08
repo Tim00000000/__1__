@@ -66,4 +66,67 @@
       text-align: center;
       margin-bottom: 1.5rem;
     }
+Перемикання мов:
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Language Toggle</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 100px;
+      background-color: #f0f0f0;
+    }
+
+    .toggle-btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .toggle-btn:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+  <h1 id="title">Вітаємо на нашому сайті!</h1>
+  <p id="description">Це приклад перемикача мови між українською та англійською.</p>
+  <button class="toggle-btn" onclick="toggleLanguage()">Перемкнути мову</button>
+
+  <script>
+    let currentLang = 'uk';
+
+    const content = {
+      uk: {
+        title: "Вітаємо на нашому сайті!",
+        description: "Це приклад перемикача мови між українською та англійською.",
+        button: "Перемкнути мову"
+      },
+      en: {
+        title: "Welcome to our website!",
+        description: "This is an example of a language switcher between English and Ukrainian.",
+        button: "Switch Language"
+      }
+    };
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'uk' ? 'en' : 'uk';
+
+      document.getElementById('title').textContent = content[currentLang].title;
+      document.getElementById('description').textContent = content[currentLang].description;
+      document.querySelector('.toggle-btn').textContent = content[currentLang].button;
+    }
+  </script>
+
+</body>
+</html>
 
