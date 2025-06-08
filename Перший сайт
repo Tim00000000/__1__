@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>GameZone – Магазин Відеоігор</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f0f4f8;
+      color: #333;
+    }
+
+    header {
+      background-color: #111;
+      padding: 1rem;
+      text-align: center;
+      color: #fff;
+      animation: slideFadeIn 1.5s ease-out forwards;
+    }
+
+    @keyframes slideFadeIn {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      padding: 1rem;
+      background: #222;
+      color: white;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    nav .tabs button,
+    .toggle-btn {
+      padding: 8px 14px;
+      margin: 0.2rem;
+      background-color: #007bff;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      cursor: pointer;
+    }
+
+    nav .tabs button.active {
+      background-color: #28a745;
+    }
+
+    nav input[type="text"] {
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      padding: 2rem;
+    }
+
+    .game-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      width: 250px;
+      padding: 1rem;
+      text-align: center;
+      position: relative;
+    }
+
+    .game-card img {
+      max-width: 100%;
+      border-radius: 8px;
+    }
+
+    .badge-sale {
+      background-color: red;
+      color: white;
+      padding: 4px 8px;
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 0.8rem;
+      border-radius: 4px;
+    }
+
+    .heart {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: #ccc;
+    }
+
+    .heart.active {
+      color: red;
+    }
+
+    .login-form {
+      background-color: #fff;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      width: 300px;
+      margin: 2rem auto;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.5rem;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .error {
+      color: red;
+      font-size: 0.9rem;
+      display: none;
+    }
+
+    .success {
+      color: green;
+      text-align: center;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background-color: #111;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1 id="main-title">GameZone – Магазин Відеоігор</h1>
+  </header>
+
+  <nav>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="filterGames('all')">Всі</button>
+      <button class="tab-btn" onclick="filterGames('wishlist')">Бажані</button>
+      <button class="tab-btn" onclick="filterGames('sale')">Акції</button>
+    </div>
+    <input type="text" id="searchInput" placeholder="Пошук..." oninput="filterGames()">
+    <button class="toggle-btn" onclick="toggleLanguage()">Перемкнути мову</button>
+  </nav>
+
+  <section class="container" id="game-section">
+    <!-- Ігри -->
+  </section>
+
+  <form class="login-form" id="loginForm">
+    <h2>Вхід</h2>
+    <div class="form-group">
+      <input type="email" id="email" placeholder="Email" required>
+      <div class="error" id="emailError">Некоректний email.</div>
+    </div>
+    <div class="form-group">
+      <input type="password" id="password" placeholder="Пароль" required>
+      <div class="error" id="passwordError">Пароль ≥ 6 символів.</div>
+    </div>
+    <button type="submit" class="toggle-btn">Увійти</button>
+    <div class="success" id="successMessage"></div>
+  </form>
+
+  <footer>
+    &copy; 2025 GameZone. Усі права захищені.
+  </footer>
+
+  <script>
+    let currentLang = 'uk';
+    let currentFilter = 'all';
+
+    const games = [
+      { name: 'GTA V', code: 'GTA2025UK', sale: false, wishlist: false, img: 'https://via.placeholder.com/250x150' },
+      { name: 'Cyberpunk 2077', code: 'CYBER2077UA', sale: true, wishlist: false, img: 'https://via.placeholder.com/250x150' },
+      { name: 'The Witcher 3', code: 'WITCHER3UA', sale: false, wishlist: false, img: 'https://via.placeholder.com/250x150' },
+      { name: 'Red Dead Redemption 2', code: 'RDR22025', sale: true, wishlist: false, img: 'https://via.placeholder.com/250x150' },
+    ];
+
+    const content = {
+      uk: {
+        title: "GameZone – Магазин Відеоігор",
+        buy: "Купити",
+        login: "Увійти",
+        emailError: "Некоректний email.",
+        passError: "Пароль ≥ 6 символів.",
+        success: "Вхід успішний!",
+        toggle: "Перемкнути мову",
+        tabs: ["Всі", "Бажані", "Акції"],
+        search: "Пошук..."
+      },
+      en: {
+        title: "GameZone – Video Game Store",
+        buy: "Buy",
+        login: "Login",
+        emailError: "Invalid email.",
+        passError: "Password must be at least 6 characters.",
+        success: "Login successful!",
+        toggle: "Switch Language",
+        tabs: ["All", "Wishlist", "Sale"],
+        search: "Search..."
+      }
+    };
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'uk' ? 'en' : 'uk';
+      document.getElementById('main-title').textContent = content[currentLang].title;
+      document.querySelector('.login-form h2').textContent = content[currentLang].login;
+      document.getElementById('emailError').textContent = content[currentLang].emailError;
+      document.getElementById('passwordError').textContent = content[currentLang].passError;
+      document.querySelector('.toggle-btn').textContent = content[currentLang].toggle;
+      document.getElementById('searchInput').placeholder = content[currentLang].search;
+
+      document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+        btn.textContent = content[currentLang].tabs[i];
+      });
+
+      renderGames();
+    }
+
+    function toggleWishlist(index) {
+      games[index].wishlist = !games[index].wishlist;
+      renderGames();
+    }
+
+    function filterGames(filter = currentFilter) {
+      currentFilter = filter;
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      const tabIndex = ['all', 'wishlist', 'sale'].indexOf(currentFilter);
+      if (tabIndex >= 0) {
+        document.querySelectorAll('.tab-btn')[tabIndex].classList.add('active');
+      }
+      renderGames();
+    }
+
+    function renderGames() {
+      const container = document.getElementById('game-section');
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      container.innerHTML = '';
+
+      games.forEach((game, index) => {
+        const matchesSearch = game.name.toLowerCase().includes(search);
+        const matchesFilter = currentFilter === 'all' ||
+          (currentFilter === 'wishlist' && game.wishlist) ||
+          (currentFilter === 'sale' && game.sale);
+
+        if (matchesSearch && matchesFilter) {
+          const card = document.createElement('div');
+          card.className = 'game-card';
+          card.innerHTML = `
+            <img src="${game.img}" alt="${game.name}">
+            ${game.sale ? '<div class="badge-sale">SALE</div>' : ''}
+            <div class="heart ${game.wishlist ? 'active' : ''}" onclick="toggleWishlist(${index})">❤</div>
+            <h3>${game.name}</h3>
+            <p>Код: ${game.code}</p>
+            <button class="toggle-btn">${content[currentLang].buy}</button>
+          `;
+          container.appendChild(card);
+        }
+      });
+    }
+
+    const form = document.getElementById('loginForm');
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      let valid = true;
+      const email = document.getElementById('email');
+      const password = document.getElementById('password');
+      const emailError = document.getElementById('emailError');
+      const passwordError = document.getElementById('passwordError');
+      const successMessage = document.getElementById('successMessage');
+
+      emailError.style.display = 'none';
+      passwordError.style.display = 'none';
+      successMessage.textContent = '';
+
+      if (!email.value.includes('@') || !email.value.includes('.')) {
+        emailError.style.display = 'block';
+        valid = false;
+      }
+
+      if (password.value.length < 6) {
+        passwordError.style.display = 'block';
+        valid = false;
+      }
+
+      if (valid) {
+        successMessage.textContent = content[currentLang].success;
+        form.reset();
+      }
+    });
+
+    // Ініціалізація
+    renderGames();
+  </script>
+
+</body>
+</html>
